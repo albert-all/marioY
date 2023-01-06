@@ -20,7 +20,7 @@ public class Window {
     private String title;
     private long glwWindow;
 
-    private float r, g, b, a;
+    public float r, g, b, a;
     private boolean fadeToBlack = false;
 
     private static Window window = null;
@@ -37,8 +37,8 @@ public class Window {
         a = 1;
     }
 
-    public static void changeScene(int newScene){
-        switch (newScene){
+    public static void changeScene(int newScene) {
+        switch (newScene) {
             case 0:
                 currentScene = new LevelEditorScene();
                 break;
@@ -46,7 +46,7 @@ public class Window {
                 currentScene = new LevelScene();
                 break;
             default:
-                assert false: "sdfsd";
+                assert false : "Unknown scene";
                 break;
         }
     }
@@ -113,31 +113,28 @@ public class Window {
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
         GL.createCapabilities();
+        Window.changeScene(0);
     }
 
     private void loop() {
         float beginTime = Time.getTime();
-        float endTime = Time.getTime();
+        float endTime;
+        float dt = -1.0f;
 
         while (!glfwWindowShouldClose(glwWindow)) {
             glfwPollEvents();
             glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            if (fadeToBlack) {
-                r = Math.max(r - 0.01f, 0);
-                g = Math.max(g - 0.01f, 0);
-                b = Math.max(b - 0.01f, 0);
+            if (dt >= 0) {
+                currentScene.update(dt);
             }
 
-            if (MouseListener.mouseButtonDown(GLFW_MOUSE_BUTTON_LEFT)) {
-                fadeToBlack = true;
-            }
 
             glfwSwapBuffers(glwWindow); // swap the color buffers
 
             endTime = Time.getTime();
-            float dt = endTime - beginTime;
+            dt = endTime - beginTime;
             beginTime = endTime;
         }
 
